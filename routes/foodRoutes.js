@@ -1,17 +1,17 @@
 const express = require("express");
+const router = express.Router();
 const {
   createFood,
-  getFoodList,
+  getAllFood,
+  getFoodById,
   updateFood,
   deleteFood,
 } = require("../controllers/foodController");
-const authMiddleware = require("../middleware/authMiddleware");
 
-const router = express.Router();
-
-router.post("/", authMiddleware, createFood);
-router.get("/", getFoodList);
-router.put("/:id", authMiddleware, updateFood);
-router.delete("/:id", authMiddleware, deleteFood);
+router.post("/", createFood);
+router.get("/", getAllFood);
+router.get("/:id", getFoodById);
+router.put("/:id", updateFood);
+router.delete("/:id", deleteFood);
 
 module.exports = router;

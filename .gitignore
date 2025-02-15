@@ -1,2 +1,18 @@
+# Node modules
 node_modules/
+
+# Environment
 .env
+
+# Logs
+logs/
+*.log
+
+# Coverage
+coverage/
+
+# Build
+dist/
+
+# OS-specific
+.DS_Store

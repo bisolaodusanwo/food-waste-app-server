@@ -29,6 +29,10 @@ const FoodSchema = new mongoose.Schema(
       enum: ["available", "claimed", "expired"],
       default: "available",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

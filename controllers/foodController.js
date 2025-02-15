@@ -2,71 +2,102 @@ const Food = require("../models/Food");
 
 exports.createFood = async (req, res) => {
   try {
-    const { name, quantity, description, location } = req.body;
-    const food = new Food({
-      donor: req.user.userId,
+    const { donor, name, quantity, description, location } = req.body;
+    if (!name || !quantity || !description || !location) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newFood = new Food({
+      donor,
       name,
       quantity,
       description,
       location,
     });
-    await food.save();
-    res.status(201).json({ message: "Food donation added successfully", food });
+    await newFood.save();
+
+    res.status(201).json({
+      message: "Food created successfully",
+      food: newFood,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Server Error" });
+    console.error("Create Food Error:", error);
+    res.status(400).json({ error: error.message });
   }
 };
 
-exports.getFoodList = async (req, res) => {
+exports.getAllFood = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-    const foodList = await Food.find({ status: "available", deleted: false })
-      .populate("donor", "name location")
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .exec();
-
-    const total = await Food.countDocuments({
-      status: "available",
-      deleted: false,
+    const foods = await Food.find({ isDeleted: false }).populate(
+      "donor",
+      "firstName lastName email"
+    );
+    res.status(200).json({
+      message: "Foods retrieved successfully",
+      foods,
     });
-    res.json({ foodList, total, page, totalPages: Math.ceil(total / limit) });
   } catch (error) {
-    res.status(500).json({ error: "Server Error" });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getFoodById = async (req, res) => {
+  try {
+    const food = await Food.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    }).populate("donor", "firstName lastName email");
+    if (!food) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+    res.status(200).json({
+      message: "Food item retrieved successfully",
+      food,
+    });
+  } catch (error) {
+    console.error("Get Food By ID Error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateFood = async (req, res) => {
   try {
-    const { id } = req.params;
-    const food = await Food.findById(id);
+    const { name, quantity, description, location, status } = req.body;
 
-    if (!food) return res.status(404).json({ message: "Food not found" });
-    if (food.donor.toString() !== req.user.userId)
-      return res.status(403).json({ message: "Unauthorized" });
+    const updatedFood = await Food.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: false },
+      { name, quantity, description, location, status },
+      { new: true, runValidators: true }
+    );
 
-    Object.assign(food, req.body);
-    await food.save();
-    res.json({ message: "Food updated successfully", food });
+    if (!updatedFood) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+    res.status(200).json({
+      message: "Food item updated successfully",
+      food: updatedFood,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Server Error" });
+    console.error("Update Food Error:", error);
+    res.status(400).json({ message: error.message });
   }
 };
 
-exports.softDeleteFood = async (req, res) => {
+exports.deleteFood = async (req, res) => {
   try {
-    const { id } = req.params;
-    const food = await Food.findById(id);
-
-    if (!food) return res.status(404).json({ message: "Food not found" });
-    if (food.donor.toString() !== req.user.userId)
-      return res.status(403).json({ message: "Unauthorized" });
-
-    food.deleted = true;
-    g;
-    await food.save();
-    res.json({ message: "Food donation deleted successfully (soft delete)" });
+    const deletedFood = await Food.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: false },
+      { isDeleted: true },
+      { new: true }
+    );
+    if (!deletedFood) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+    res.status(200).json({
+      message: "Food item soft-deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ error: "Server Error" });
+    console.error("Delete Food Error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
