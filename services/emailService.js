@@ -1,20 +1,27 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();
+const keys = require("../config/keys");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: keys.emailUser,
+    pass: keys.emailPass,
   },
 });
 
+/**
+ * Sends an email using Gmail's SMTP.
+ * @param {string} to - Recipient's email.
+ * @param {string} subject - Subject line.
+ * @param {string} text - Plain text body.
+ * @param {string} html - HTML body.
+ */
 const sendEmail = async (to, subject, text, html) => {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: keys.emailUser,
       to,
       subject,
       text,
@@ -22,7 +29,7 @@ const sendEmail = async (to, subject, text, html) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent: ", info.response);
+    console.log("Email sent:", info.response);
     return info;
   } catch (error) {
     console.error("Error sending email:", error);

@@ -1,11 +1,16 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { sendEmail } = require("../utils/email");
-const { generateResetToken } = require("../utils/password");
-console.log("generateResetToken:", generateResetToken);
+const { sendEmail } = require("../services/emailService");
+const { generateResetToken } = require("../services/tokenService");
 require("dotenv").config();
 
+/**
+ * Generates a JWT for a user.
+ * @param {string} userId
+ * @param {string} role
+ * @returns JWT token
+ */
 const generateToken = (userId, role) => {
   return jwt.sign({ userId, role }, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -51,7 +56,8 @@ exports.signin = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    const token = generateToken(user.id, user.role);
+
+    const token = generateToken(user._id, user.role);
 
     res.json({
       token,
@@ -113,6 +119,7 @@ exports.resetPassword = async (req, res) => {
         .status(400)
         .json({ message: "Invalid or expired password reset token" });
     }
+
     user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
