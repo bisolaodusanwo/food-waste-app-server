@@ -101,3 +101,31 @@ exports.deleteFood = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getNearbyFoods = async (req, res) => {
+  try {
+    const { lat, lng, maxDistance = 5000 } = req.query;
+    if (!lat || !lng) {
+      return res
+        .status(400)
+        .json({ message: "Latitude and longitude are required" });
+    }
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lng);
+
+    const foods = await Food.find({
+      locationCoordinates: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [longitude, latitude] },
+          $maxDistance: parseInt(maxDistance),
+        },
+      },
+      isDeleted: false,
+      status: "available",
+    });
+
+    res.status(200).json({ data: foods });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

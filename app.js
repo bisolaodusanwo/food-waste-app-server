@@ -11,6 +11,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const foodRoutes = require("./routes/foodRoutes");
 const landingRoutes = require("./routes/landingRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
 connectDB();
 
@@ -25,6 +26,7 @@ app.use("/api/users", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/foods", foodRoutes);
 app.use("/api/landing", landingRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => {
   res.send("Food Waste App API is running...");
