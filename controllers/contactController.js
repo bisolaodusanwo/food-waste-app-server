@@ -12,7 +12,7 @@ exports.createContact = async (req, res, next) => {
     const contact = new Contact({ name, email, subject, message });
     await contact.save();
 
-    const adminEmail = "admin@example.com";
+    const adminEmail = "abizmichelle.com";
     const emailSubject = `New Contact Inquiry: ${subject}`;
     const emailText = `You have received a new inquiry from ${name} (${email}). Message: ${message}`;
     const emailHtml = `<p>You have received a new inquiry from <strong>${name}</strong> (${email}).</p><p>Subject: ${subject}</p><p>Message: ${message}</p>`;
