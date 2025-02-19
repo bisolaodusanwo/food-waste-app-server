@@ -5,12 +5,6 @@ const { sendEmail } = require("../services/emailService");
 const { generateResetToken } = require("../services/tokenService");
 require("dotenv").config();
 
-/**
- * Generates a JWT for a user.
- * @param {string} userId
- * @param {string} role
- * @returns JWT token
- */
 const generateToken = (userId, role) => {
   return jwt.sign({ userId, role }, process.env.JWT_SECRET, {
     expiresIn: "1h",

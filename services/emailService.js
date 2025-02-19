@@ -11,13 +11,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/**
- * Sends an email using Gmail's SMTP.
- * @param {string} to - Recipient's email.
- * @param {string} subject - Subject line.
- * @param {string} text - Plain text body.
- * @param {string} html - HTML body.
- */
 const sendEmail = async (to, subject, text, html) => {
   try {
     const mailOptions = {
