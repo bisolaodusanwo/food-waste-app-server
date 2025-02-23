@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoutes");
 const foodRoutes = require("./routes/foodRoutes");
 const landingRoutes = require("./routes/landingRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const howWeDoItRoutes = require("./routes/howWeDoItRoutes");
 
 connectDB();
 
@@ -27,6 +28,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/foods", foodRoutes);
 app.use("/api/landing", landingRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/how-we-do-it", howWeDoItRoutes);
 
 app.get("/", (req, res) => {
   res.send("Food Waste App API is running...");
