@@ -9,9 +9,12 @@ const HowWeDoItSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-  },
+  steps: [
+    {
+      stepTitle: String,
+      stepDescription: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model("HowWeDoIt", HowWeDoItSchema);
