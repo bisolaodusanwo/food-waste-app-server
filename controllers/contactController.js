@@ -18,6 +18,8 @@ exports.createContact = async (req, res, next) => {
     const emailHtml = `<p>You have received a new inquiry from <strong>${name}</strong> (${email}).</p><p>Subject: ${subject}</p><p>Message: ${message}</p>`;
     await sendEmail(adminEmail, emailSubject, emailText, emailHtml);
 
+    console.log("Admin email is:", adminEmail);
+
     res.status(201).json({
       message: "Contact inquiry received successfully",
       data: contact,
