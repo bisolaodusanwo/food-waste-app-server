@@ -1,6 +1,6 @@
 const landingContent = {
   hero: {
-    title: "Welcome to Food Savalage App",
+    title: "Welcome to Food Salvage",
     subtitle: "Donate surplus food to help those in need",
     image: "https://example.com/assets/images/hero.jpg",
   },
