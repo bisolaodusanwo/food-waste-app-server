@@ -2,9 +2,39 @@ const Food = require("../models/Food");
 
 exports.createFood = async (req, res) => {
   try {
-    const { donor, name, quantity, description, location } = req.body;
-    if (!name || !quantity || !description || !location) {
+    const {
+      donor,
+      name,
+      quantity,
+      description,
+      image,
+      location,
+      locationCoordinates,
+    } = req.body;
+
+    if (
+      !donor ||
+      !name ||
+      !quantity ||
+      !description ||
+      !image ||
+      !location ||
+      !locationCoordinates
+    ) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (
+      !locationCoordinates.coordinates ||
+      !Array.isArray(locationCoordinates.coordinates)
+    ) {
+      return res.status(400).json({
+        message: "Invalid location format. 'coordinates' must be an array",
+      });
+    }
+
+    if (!donor.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid donor ID" });
     }
 
     const newFood = new Food({
@@ -12,7 +42,12 @@ exports.createFood = async (req, res) => {
       name,
       quantity,
       description,
+      image,
       location,
+      locationCoordinates: {
+        type: "Point",
+        coordinates: locationCoordinates.coordinates,
+      },
     });
     await newFood.save();
 
@@ -21,7 +56,6 @@ exports.createFood = async (req, res) => {
       food: newFood,
     });
   } catch (error) {
-    console.error("Create Food Error:", error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -126,6 +160,7 @@ exports.getNearbyFoods = async (req, res) => {
 
     res.status(200).json({ data: foods });
   } catch (error) {
+    console.error("Get Nearby Foods Error:", error);
     res.status(500).json({ message: error.message });
   }
 };
